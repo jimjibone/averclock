@@ -6,3 +6,6 @@
 ) > src/current_time.h
 
 ino build && ino upload
+
+# better reset to zero
+git checkout src/current_time.h
