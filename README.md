@@ -1,7 +1,7 @@
 averclock
 =========
 
-Just an exercise in timers. Oh, it's a clock.
+Just an exercise in timers. Oh, it's an arduino-compatable clock.
 
 1. Install [ino][1]
 2. Run `deploy.sh`
