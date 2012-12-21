@@ -25,7 +25,7 @@
 // display SPI slave select pin
 #define DISP_SS 10
 
-volatile int heartbeat_count = 0;
+volatile unsigned int heartbeat_count = 0;
 
 
 typedef struct {
