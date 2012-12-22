@@ -20,7 +20,8 @@
 #define TICK 20
 
 // 1 second intervals to update clock
-#define HEARTBEAT_PERIOD (1000/TICK)
+#define HEARTBEAT_PERIOD       (1000/TICK)
+#define UPDATE_DISPLAY_PERIOD  (1000*60/TICK)
 
 // display SPI slave select pin
 #define DISP_SS 10
