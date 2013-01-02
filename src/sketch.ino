@@ -73,6 +73,10 @@ void setup () {
 
 	interrupts();
 
+	// account for compile upload time
+	inc_time();
+	inc_time();
+	inc_time();
 
 	init_display();
 }
