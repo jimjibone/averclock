@@ -28,6 +28,8 @@
 
 volatile unsigned int heartbeat_count = 0;
 
+char colon_state = false;
+
 
 typedef struct {
 	char hours;
@@ -92,6 +94,7 @@ ISR(TIMER1_COMPA_vect) {
 		heartbeat_count = 0;
 		inc_time();
 		update_display();
+		toggle_colon();
 	}
 
 	// TODO: reset interrupt flag!
@@ -152,4 +155,17 @@ void init_display(void) {
 
 	// fill with initial time
 	update_display();
+}
+
+void toggle_colon(){
+	colon_state = ! colon_state;
+
+	// reset, turn on colon
+	digitalWrite(DISP_SS,0);
+	// dots
+	SPI.transfer(0x77);
+	// colon or no colon
+	SPI.transfer(colon_state?1<<4:0);
+
+	digitalWrite(DISP_SS,1);
 }
