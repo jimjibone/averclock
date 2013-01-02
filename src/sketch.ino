@@ -36,7 +36,7 @@ typedef struct {
 } elapsed;
 
 // initialise with compile-time time with an offset to account for build/upload time
-elapsed time = {HOURS,MINUTES,SECONDS+4};
+elapsed time = {HOURS,MINUTES,SECONDS};
 
 void init_display(void);
 
@@ -73,6 +73,7 @@ void setup () {
 
 	interrupts();
 
+
 	init_display();
 }
 
@@ -86,6 +87,7 @@ ISR(TIMER1_COMPA_vect) {
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
+		update_display();
 	}
 
 	// TODO: reset interrupt flag!
@@ -111,16 +113,13 @@ void update_display (void) {
 	// select dsiplay
 	digitalWrite(DISP_SS,0);
 
-	// reset display, just in case the cursor has been moved
-	SPI.transfer(0x77);
-
 	// hours
-	SPI.transfer(time.hours%10);
 	SPI.transfer(time.hours/10);
+	SPI.transfer(time.hours%10);
 
 	// minutes
-	SPI.transfer(time.minutes%10);
 	SPI.transfer(time.minutes/10);
+	SPI.transfer(time.minutes%10);
 
 	// deselect display
 	digitalWrite(DISP_SS,1);
@@ -135,10 +134,17 @@ void init_display(void) {
 
 	// initialize SPI:
 	SPI.begin();
+	SPI.setClockDivider(SPI_CLOCK_DIV64);
 
-	// turn on colon
+	// reset, turn on colon
+	digitalWrite(DISP_SS,0);
+	// reset
+	SPI.transfer(0x76);
+	// dots
 	SPI.transfer(0x77);
-	SPI.transfer(0x08);
+	// colon
+	SPI.transfer(0x10);
+	digitalWrite(DISP_SS,1);
 
 	// fill with initial time
 	update_display();
