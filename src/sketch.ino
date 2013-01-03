@@ -28,8 +28,12 @@ typedef struct {
 	char seconds;
 } elapsed;
 
-// initialise with compile-time time with an offset to account for build/upload time
-elapsed time = {HOURS,MINUTES,SECONDS};
+#ifdef AUTO_TIME
+	// initialise with compile-time time with an offset to account for build/upload time
+	elapsed time = {HOURS,MINUTES,SECONDS};
+#else
+	elapsed time = {0,0,0};
+#endif
 
 void init_display(void);
 

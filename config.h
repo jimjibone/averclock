@@ -1,6 +1,9 @@
 // to use this, uncomment and install an LDR potential divider (high side) on A5
 #define AUTO_BRIGHTNESS
 
+// set time from PC?
+#define AUTO_TIME
+
 // tick interval in ms, 1-20 recommended, 260 max
 #define TICK 20
 
