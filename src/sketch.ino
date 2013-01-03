@@ -21,14 +21,18 @@
 
 // 1 second intervals to update clock
 #define HEARTBEAT_PERIOD       (1000/TICK)
-#define UPDATE_DISPLAY_PERIOD  (1000*60/TICK)
+
+// 40ms to update brightness (10K LDR high + 15K resistor low)
+#define UPDATE_BRIGHTNESS      (40/TICK)
+
+
 
 // display SPI slave select pin
 #define DISP_SS 10
 
 volatile unsigned int heartbeat_count = 0;
+volatile unsigned int update_brightness_count = 0;
 
-char colon_state = false;
 
 
 typedef struct {
@@ -45,7 +49,7 @@ void init_display(void);
 // tasks
 void inc_time (void);
 void update_display (void);
-
+void update_brightness (void);
 
 void setup () {
 	// enable interrupts (match A, too)
@@ -96,6 +100,12 @@ ISR(TIMER1_COMPA_vect) {
 		update_display();
 		toggle_colon();
 	}
+
+	if (++update_brightness_count == UPDATE_BRIGHTNESS) {
+		update_brightness_count = 0;
+		update_brightness();
+	}
+
 
 	// TODO: reset interrupt flag!
 }
@@ -158,6 +168,8 @@ void init_display(void) {
 }
 
 void toggle_colon(){
+	static char colon_state = false;
+
 	colon_state = ! colon_state;
 
 	// reset, turn on colon
@@ -167,5 +179,31 @@ void toggle_colon(){
 	// colon or no colon
 	SPI.transfer(colon_state?1<<4:0);
 
+	digitalWrite(DISP_SS,1);
+}
+
+void update_brightness() {
+	unsigned int light = 0;
+
+	// is bright?
+	static char bright = 1;
+
+	light = analogRead(A5);
+
+	digitalWrite(DISP_SS,0);
+
+	if (light > 120 && !bright) {
+		// max brightness
+		SPI.transfer(0x7A);
+		SPI.transfer(0);
+		bright = 1;
+	} else if (light < 75 && bright) {
+		// dim display
+		SPI.transfer(0x7A);
+		SPI.transfer(200);
+		bright = 0;
+	}
+
+	// deselect display
 	digitalWrite(DISP_SS,1);
 }
