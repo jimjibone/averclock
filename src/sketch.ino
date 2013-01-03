@@ -48,7 +48,7 @@ void init_display(void);
 
 // tasks
 void inc_time (void);
-void update_display (void);
+void update_display (char);
 void update_brightness (void);
 
 void setup () {
@@ -97,7 +97,7 @@ ISR(TIMER1_COMPA_vect) {
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
-		update_display();
+		update_display(0);
 		toggle_colon();
 	}
 
@@ -126,8 +126,11 @@ void inc_time (void) {
 		time.hours = 0;
 }
 
-void update_display (void) {
-	// select dsiplay
+void update_display (char force) {
+	// no seconds, so no point in updating every second. Only update on 0 seconds
+	if (time.seconds && !force) return;
+
+	// select display
 	digitalWrite(DISP_SS,0);
 
 	// hours
@@ -163,8 +166,8 @@ void init_display(void) {
 	SPI.transfer(0x10);
 	digitalWrite(DISP_SS,1);
 
-	// fill with initial time
-	update_display();
+	// fill with initial time (force)
+	update_display(1);
 }
 
 void toggle_colon(){
