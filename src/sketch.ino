@@ -120,7 +120,7 @@ void inc_time (void) {
 
 void update_display (char force) {
 	// no seconds, so no point in updating every second. Only update on 0 seconds
-	if (time.seconds && !force) return;
+	//if (time.seconds && !force) return;
 
 	// select display
 	digitalWrite(DISP_SS,0);
