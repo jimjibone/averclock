@@ -4,8 +4,10 @@
 #define BRIGHTNESS_THRESH_DARK  300
 
 // 0->255 == bright->dim (MUST BE MULTIPLES OF 10)
-#define DISP_DIM    120
-#define DISP_BRIGHT 0
+#define DISP_DIMMEST   120
+#define DISP_BRIGHTEST 0
+#define DISP_FADE_MS   3000
+
 
 // update display every second (good if ESD rapes your display)
 #define AGGRESSIVE_MODE
@@ -24,8 +26,7 @@
 // 1 second intervals to update clock
 #define HEARTBEAT_PERIOD          (1000/TICK)
 
-// 40ms to update brightness (10K LDR high + 15K resistor low)
-#define UPDATE_BRIGHTNESS_PERIOD  (100/TICK)
+#define UPDATE_BRIGHTNESS_PERIOD  (80/TICK)
 
 #define DISPLAY_ADC_PERIOD        (400/TICK)
 
@@ -33,3 +34,5 @@
 #define DISP_SS 10
 
 
+// how much brightness to step at a time
+#define DISP_STEP  (  (DISP_DIMMEST-DISP_BRIGHTEST)/(DISP_FADE_MS/(UPDATE_BRIGHTNESS_PERIOD*TICK))  )

@@ -29,6 +29,13 @@ typedef struct {
 	char seconds;
 } elapsed;
 
+typedef enum {
+	BRIGHT,
+	BRIGHTENING,
+	FADING,
+	DIM
+} disp_state;
+
 #ifdef AUTO_TIME
 	// initialise with compile-time time with an offset to account for build/upload time
 	elapsed time = {HOURS,MINUTES,SECONDS};
@@ -164,7 +171,7 @@ void init_display(void) {
 
 	// initialize SPI:
 	SPI.begin();
-	SPI.setClockDivider(SPI_CLOCK_DIV64);
+	SPI.setClockDivider(SPI_CLOCK_DIV32);
 
 	// reset, turn on colon
 	digitalWrite(DISP_SS,0);
@@ -198,26 +205,45 @@ void toggle_colon(){
 void update_brightness() {
 	unsigned int light = 0;
 
-	// is bright?
-	static char bright = 1;
+	// display brightness
+	static disp_state state = BRIGHT;
+	static signed int brightness = DISP_BRIGHTEST;
 
 	light = analogRead(LDR_PIN);
 
-	digitalWrite(DISP_SS,0);
+	// state machine
+	switch (state) {
+		case BRIGHT:
+			if ( light > BRIGHTNESS_THRESH_DARK )
+				state = FADING;
+		return;
 
-	if (light < BRIGHTNESS_THRESH_LIGHT && !bright) {
-		// max brightness
-		SPI.transfer(0x7A);
-		SPI.transfer(DISP_BRIGHT);
-		bright = 1;
-	} else if (light > BRIGHTNESS_THRESH_DARK && bright) {
-		// dim display
-		SPI.transfer(0x7A);
-		SPI.transfer(DISP_DIM);
-		bright = 0;
+		case DIM:
+			if (light < BRIGHTNESS_THRESH_LIGHT )
+				state = BRIGHTENING;
+		return;
+
+		case FADING:
+			brightness += DISP_STEP;
+
+			if (brightness >= DISP_DIMMEST) {
+				state      = DIM;
+				brightness = DISP_DIMMEST;
+			}
+		break;
+
+		case BRIGHTENING:
+			brightness -= DISP_STEP;
+			if (brightness <= DISP_BRIGHTEST) {
+				state      = BRIGHT;
+				brightness = DISP_BRIGHTEST;
+			}
+		break;
 	}
 
-	// deselect display
+	digitalWrite(DISP_SS,0);
+	SPI.transfer(0x7A);
+	SPI.transfer(brightness);
 	digitalWrite(DISP_SS,1);
 }
 
