@@ -18,8 +18,8 @@
 #include <SPI.h>
 
 volatile unsigned int heartbeat_count         = 0;
-volatile unsigned int update_brightness_count = 0;
-volatile unsigned int display_adc_count       = 0;
+volatile unsigned int update_brightness_count = 1;
+volatile unsigned int display_adc_count       = 2;
 
 
 
@@ -164,7 +164,6 @@ void init_display(void) {
 
 	// slave select pin init
 	pinMode (DISP_SS, OUTPUT);
-	digitalWrite(DISP_SS,1);
 
 	// wait for it to boot
 	delay(300);
@@ -206,7 +205,7 @@ void update_brightness() {
 	unsigned int light = 0;
 
 	// display brightness
-	static disp_state state = BRIGHT;
+	static disp_state state      = BRIGHT;
 	static signed int brightness = DISP_BRIGHTEST;
 
 	light = analogRead(LDR_PIN);
