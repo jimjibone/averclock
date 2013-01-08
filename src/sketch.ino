@@ -17,8 +17,9 @@
 
 #include <SPI.h>
 
-volatile unsigned int heartbeat_count = 0;
+volatile unsigned int heartbeat_count         = 0;
 volatile unsigned int update_brightness_count = 0;
+volatile unsigned int display_adc_count       = 0;
 
 
 
@@ -75,6 +76,10 @@ void setup () {
 	inc_time();
 	inc_time();
 
+	pinMode(LDR_PIN,INPUT);
+	// 20K pullup
+	digitalWrite(LDR_PIN,HIGH);
+
 	init_display();
 }
 
@@ -85,12 +90,20 @@ void loop () {
 
 // Interrupt service routine, scheduler
 ISR(TIMER1_COMPA_vect) {
+
+#ifndef DEBUG
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
 		update_display(0);
 		toggle_colon();
 	}
+#else
+	if (++display_adc_count == DISPLAY_ADC_PERIOD) {
+		display_adc_count = 0;
+		display_adc();
+	}
+#endif
 
 #ifdef AUTO_BRIGHTNESS
 	if (++update_brightness_count == UPDATE_BRIGHTNESS_PERIOD) {
@@ -119,8 +132,10 @@ void inc_time (void) {
 }
 
 void update_display (char force) {
+#ifndef AGGRESSIVE_MODE
 	// no seconds, so no point in updating every second. Only update on 0 seconds
-	//if (time.seconds && !force) return;
+	if (time.seconds && !force) return;
+#endif
 
 	// select display
 	digitalWrite(DISP_SS,0);
@@ -143,6 +158,9 @@ void init_display(void) {
 	// slave select pin init
 	pinMode (DISP_SS, OUTPUT);
 	digitalWrite(DISP_SS,1);
+
+	// wait for it to boot
+	delay(300);
 
 	// initialize SPI:
 	SPI.begin();
@@ -183,21 +201,37 @@ void update_brightness() {
 	// is bright?
 	static char bright = 1;
 
-	light = analogRead(A5);
+	light = analogRead(LDR_PIN);
 
 	digitalWrite(DISP_SS,0);
 
-	if (light > 120 && !bright) {
+	if (light < BRIGHTNESS_THRESH_LIGHT && !bright) {
 		// max brightness
 		SPI.transfer(0x7A);
-		SPI.transfer(0);
+		SPI.transfer(DISP_BRIGHT);
 		bright = 1;
-	} else if (light < 75 && bright) {
+	} else if (light > BRIGHTNESS_THRESH_DARK && bright) {
 		// dim display
 		SPI.transfer(0x7A);
-		SPI.transfer(200);
+		SPI.transfer(DISP_DIM);
 		bright = 0;
 	}
+
+	// deselect display
+	digitalWrite(DISP_SS,1);
+}
+
+void display_adc() {
+	unsigned int light = 0;
+
+	light = analogRead(LDR_PIN);
+
+	digitalWrite(DISP_SS,0);
+
+	SPI.transfer(light/1000%10);
+	SPI.transfer(light/100 %10);
+	SPI.transfer(light/10  %10);
+	SPI.transfer(light/1   %10);
 
 	// deselect display
 	digitalWrite(DISP_SS,1);
