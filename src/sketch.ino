@@ -31,8 +31,6 @@ typedef struct {
 
 typedef enum {
 	BRIGHT,
-	BRIGHTENING,
-	FADING,
 	DIM
 } disp_state;
 
@@ -213,29 +211,16 @@ void update_brightness() {
 	// state machine
 	switch (state) {
 		case BRIGHT:
-			if ( light > BRIGHTNESS_THRESH_DARK )
-				state = FADING;
-		return;
-
-		case DIM:
-			if (light < BRIGHTNESS_THRESH_LIGHT )
-				state = BRIGHTENING;
-		return;
-
-		case FADING:
-			brightness += DISP_STEP;
-
-			if (brightness >= DISP_DIMMEST) {
-				state      = DIM;
+			if ( light > BRIGHTNESS_THRESH_DARK ) {
 				brightness = DISP_DIMMEST;
+				state      = DIM;
 			}
 		break;
 
-		case BRIGHTENING:
-			brightness -= DISP_STEP;
-			if (brightness <= DISP_BRIGHTEST) {
-				state      = BRIGHT;
+		case DIM:
+			if (light < BRIGHTNESS_THRESH_LIGHT ){
 				brightness = DISP_BRIGHTEST;
+				state      = BRIGHT;
 			}
 		break;
 	}
