@@ -1,9 +1,9 @@
 // to use this, uncomment and install a 10K LDR potential divider on A5 to ground
-#define AUTO_BRIGHTNESS
+//#define AUTO_BRIGHTNESS
 #define BRIGHTNESS_THRESH_LIGHT 250
 #define BRIGHTNESS_THRESH_DARK  300
 
-//#define FLASHING_COLON
+#define FLASHING_COLON
 
 // 0->255 == bright->dim (MUST BE MULTIPLES OF 10)
 #define DISP_DIMMEST   120
@@ -18,7 +18,7 @@
 #define AUTO_TIME
 
 // tick interval in ms, 1-20 recommended, 260 max
-#define TICK 20
+#define TICK 100
 
 // 1 second intervals to update clock
 #define HEARTBEAT_PERIOD          (1000/TICK)

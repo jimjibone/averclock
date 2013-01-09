@@ -100,7 +100,7 @@ ISR(TIMER1_COMPA_vect) {
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
-		update_display(0);
+		update_display();
 	}
 #else
 	if (++display_adc_count == DISPLAY_ADC_PERIOD) {
@@ -135,7 +135,7 @@ void inc_time (void) {
 		time.hours = 0;
 }
 
-void update_display (char force) {
+void update_display () {
 	static char colon_state = true;
 
 #ifdef FLASHING_COLON
@@ -149,6 +149,7 @@ void update_display (char force) {
 	SPI.transfer(0x77);
 	// colon or no colon
 	SPI.transfer(colon_state?1<<4:0);
+
 
 	// hours
 	SPI.transfer(time.hours/10);
@@ -173,7 +174,7 @@ void init_display(void) {
 
 	// initialize SPI:
 	SPI.begin();
-	SPI.setClockDivider(SPI_CLOCK_DIV32);
+	SPI.setClockDivider(SPI_CLOCK_DIV64);
 
 	// reset, turn on colon
 	digitalWrite(DISP_SS,0);
@@ -186,7 +187,7 @@ void init_display(void) {
 	digitalWrite(DISP_SS,1);
 
 	// fill with initial time (force)
-	update_display(1);
+	update_display();
 }
 
 void update_brightness() {
