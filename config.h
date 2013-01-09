@@ -9,9 +9,6 @@
 #define DISP_DIMMEST   120
 #define DISP_BRIGHTEST 10
 
-// update display every second (good if ESD rapes your display)
-#define AGGRESSIVE_MODE
-
 #define LDR_PIN A5
 
 // display ADC reading
