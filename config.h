@@ -5,11 +5,13 @@
 
 #define FLASHING_COLON
 
-// 0->255 == bright->dim (MUST BE MULTIPLES OF 10)
+// 0->255 == bright->dim
 #define DISP_DIMMEST   120
 #define DISP_BRIGHTEST 10
 
 #define LDR_PIN A5
+
+#define HEATBEAT_LED
 
 // display ADC reading
 //#define DEBUG

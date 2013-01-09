@@ -100,7 +100,7 @@ ISR(TIMER1_COMPA_vect) {
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
-		update_display();
+		//update_display();
 	}
 #else
 	if (++display_adc_count == DISPLAY_ADC_PERIOD) {
@@ -151,6 +151,11 @@ void update_display () {
 	SPI.transfer(colon_state?1<<4:0);
 
 
+	digitalWrite(DISP_SS,1);
+	delay(10);
+	digitalWrite(DISP_SS,0);
+
+
 	// hours
 	SPI.transfer(time.hours/10);
 	SPI.transfer(time.hours%10);
@@ -168,6 +173,7 @@ void init_display(void) {
 
 	// slave select pin init
 	pinMode (DISP_SS, OUTPUT);
+	digitalWrite(DISP_SS,1);
 
 	// wait for it to boot
 	delay(300);
@@ -180,14 +186,7 @@ void init_display(void) {
 	digitalWrite(DISP_SS,0);
 	// reset
 	SPI.transfer(0x76);
-	// dots
-	SPI.transfer(0x77);
-	// colon
-	SPI.transfer(0x10);
 	digitalWrite(DISP_SS,1);
-
-	// fill with initial time (force)
-	update_display();
 }
 
 void update_brightness() {
