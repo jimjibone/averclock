@@ -101,7 +101,9 @@ ISR(TIMER1_COMPA_vect) {
 		heartbeat_count = 0;
 		inc_time();
 		update_display(0);
-		toggle_colon();
+		#ifdef FLASHING_COLON
+				toggle_colon();
+		#endif
 	}
 #else
 	if (++display_adc_count == DISPLAY_ADC_PERIOD) {
