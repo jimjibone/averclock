@@ -233,9 +233,9 @@ void display_adc() {
 
 	digitalWrite(DISP_SS,0);
 
-	SPI.transfer(light/1000%10?:'x');
-	SPI.transfer(light/100 %10?:'x');
-	SPI.transfer(light/10  %10?:'x');
+	SPI.transfer(light/1000%10);
+	SPI.transfer(light/100 %10);
+	SPI.transfer(light/10  %10);
 	SPI.transfer(light/1   %10);
 
 	// deselect display
