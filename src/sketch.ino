@@ -140,8 +140,8 @@ void update_display (char force) {
 	// select display
 	digitalWrite(DISP_SS,0);
 
-	// hours
-	SPI.transfer(time.hours/10);
+	// hours (1-2 digit)
+	SPI.transfer(time.hours/10?:'x');
 	SPI.transfer(time.hours%10);
 
 	// minutes
@@ -228,9 +228,9 @@ void display_adc() {
 
 	digitalWrite(DISP_SS,0);
 
-	SPI.transfer(light/1000%10);
-	SPI.transfer(light/100 %10);
-	SPI.transfer(light/10  %10);
+	SPI.transfer(light/1000%10?:'x');
+	SPI.transfer(light/100 %10?:'x');
+	SPI.transfer(light/10  %10?:'x');
 	SPI.transfer(light/1   %10);
 
 	// deselect display
