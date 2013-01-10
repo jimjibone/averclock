@@ -174,6 +174,9 @@ void init_display(void) {
 	SPI.transfer(0x77);
 	// colon
 	SPI.transfer(0x10);
+	// max brightness
+	SPI.transfer(0x7A);
+	SPI.transfer(DISP_BRIGHTEST);
 	digitalWrite(DISP_SS,1);
 
 	// fill with initial time (force)
