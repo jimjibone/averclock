@@ -18,8 +18,8 @@
 #include <SPI.h>
 
 volatile unsigned int heartbeat_count         = 0;
-volatile unsigned int update_brightness_count = 1;
-volatile unsigned int display_adc_count       = 2;
+volatile unsigned int update_brightness_count = 0;
+volatile unsigned int display_adc_count       = 0;
 
 
 
@@ -28,11 +28,6 @@ typedef struct {
 	char minutes;
 	char seconds;
 } elapsed;
-
-typedef enum {
-	BRIGHT,
-	DIM
-} disp_state;
 
 #ifdef AUTO_TIME
 	// initialise with compile-time time with an offset to account for build/upload time
@@ -100,7 +95,8 @@ ISR(TIMER1_COMPA_vect) {
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
-		//update_display();
+		update_display(0);
+		toggle_colon();
 	}
 #else
 	if (++display_adc_count == DISPLAY_ADC_PERIOD) {
@@ -135,26 +131,14 @@ void inc_time (void) {
 		time.hours = 0;
 }
 
-void update_display () {
-	static char colon_state = true;
-
-#ifdef FLASHING_COLON
-	colon_state = ! colon_state;
+void update_display (char force) {
+#ifndef AGGRESSIVE_MODE
+	// no seconds, so no point in updating every second. Only update on 0 seconds
+	if (time.seconds && !force) return;
 #endif
+
 	// select display
 	digitalWrite(DISP_SS,0);
-
-
-	// dots
-	SPI.transfer(0x77);
-	// colon or no colon
-	SPI.transfer(colon_state?1<<4:0);
-
-
-	digitalWrite(DISP_SS,1);
-	delay(10);
-	digitalWrite(DISP_SS,0);
-
 
 	// hours
 	SPI.transfer(time.hours/10);
@@ -186,39 +170,55 @@ void init_display(void) {
 	digitalWrite(DISP_SS,0);
 	// reset
 	SPI.transfer(0x76);
+	// dots
+	SPI.transfer(0x77);
+	// colon
+	SPI.transfer(0x10);
+	digitalWrite(DISP_SS,1);
+
+	// fill with initial time (force)
+	update_display(1);
+}
+
+void toggle_colon(){
+	static char colon_state = false;
+
+	colon_state = ! colon_state;
+
+	// reset, turn on colon
+	digitalWrite(DISP_SS,0);
+	// dots
+	SPI.transfer(0x77);
+	// colon or no colon
+	SPI.transfer(colon_state?1<<4:0);
+
 	digitalWrite(DISP_SS,1);
 }
 
 void update_brightness() {
 	unsigned int light = 0;
 
-	// display brightness
-	static disp_state state      = BRIGHT;
-	static signed int brightness = DISP_BRIGHTEST;
+	// is bright?
+	static char bright = 1;
 
 	light = analogRead(LDR_PIN);
 
-	// state machine
-	switch (state) {
-		case BRIGHT:
-			if ( light > BRIGHTNESS_THRESH_DARK ) {
-				brightness = DISP_DIMMEST;
-				state      = DIM;
-			}
-		break;
 
-		case DIM:
-			if (light < BRIGHTNESS_THRESH_LIGHT ){
-				brightness = DISP_BRIGHTEST;
-				state      = BRIGHT;
-			}
-		break;
+	if (light < BRIGHTNESS_THRESH_LIGHT && !bright) {
+		digitalWrite(DISP_SS,0);
+		// max brightness
+		SPI.transfer(0x7A);
+		SPI.transfer(DISP_BRIGHT);
+		bright = 1;
+	} else if (light > BRIGHTNESS_THRESH_DARK && bright) {
+		// dim display
+		SPI.transfer(0x7A);
+		SPI.transfer(DISP_DIM);
+		bright = 0;
+		// deselect display
+		digitalWrite(DISP_SS,1);
 	}
 
-	digitalWrite(DISP_SS,0);
-	SPI.transfer(0x7A);
-	SPI.transfer(brightness);
-	digitalWrite(DISP_SS,1);
 }
 
 void display_adc() {
