@@ -208,12 +208,14 @@ void update_brightness() {
 		digitalWrite(DISP_SS,0);
 		// max brightness
 		SPI.transfer(0x7A);
-		SPI.transfer(DISP_BRIGHT);
+		SPI.transfer(DISP_BRIGHTEST);
 		bright = 1;
+		digitalWrite(DISP_SS,1);
 	} else if (light > BRIGHTNESS_THRESH_DARK && bright) {
+		digitalWrite(DISP_SS,0);
 		// dim display
 		SPI.transfer(0x7A);
-		SPI.transfer(DISP_DIM);
+		SPI.transfer(DISP_DIMMEST);
 		bright = 0;
 		// deselect display
 		digitalWrite(DISP_SS,1);

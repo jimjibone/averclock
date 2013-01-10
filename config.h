@@ -1,5 +1,5 @@
 // to use this, uncomment and install a 10K LDR potential divider on A5 to ground
-//#define AUTO_BRIGHTNESS
+#define AUTO_BRIGHTNESS
 #define BRIGHTNESS_THRESH_LIGHT 250
 #define BRIGHTNESS_THRESH_DARK  300
 
