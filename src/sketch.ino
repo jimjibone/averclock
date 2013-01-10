@@ -81,6 +81,11 @@ void setup () {
 	digitalWrite(LDR_PIN,HIGH);
 
 	init_display();
+
+#ifdef DEBUG
+	// tick duty
+	pinMode(8,OUTPUT);
+#endif
 }
 
 void loop () {
@@ -90,8 +95,12 @@ void loop () {
 
 // Interrupt service routine, scheduler
 ISR(TIMER1_COMPA_vect) {
+#ifdef DEBUG
+	// tick duty cycle
+	digitalWrite(8,HIGH);
+#endif
 
-#ifndef DEBUG
+#ifndef DISPLAY_ADC
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
@@ -112,7 +121,10 @@ ISR(TIMER1_COMPA_vect) {
 	}
 #endif
 
-	// TODO: reset interrupt flag!
+#ifdef DEBUG
+	// tick duty cycle
+	digitalWrite(8,LOW);
+#endif
 }
 
 // call at 1Hz

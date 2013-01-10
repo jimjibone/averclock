@@ -14,7 +14,7 @@
 #define HEATBEAT_LED
 
 // display ADC reading
-//#define DEBUG
+//#define DISPLAY_ADC
 
 // set time from PC?
 #define AUTO_TIME
@@ -32,3 +32,5 @@
 // display SPI slave select pin
 #define DISP_SS 10
 
+// tick duty cycle on pin 8?
+//#define DEBUG
