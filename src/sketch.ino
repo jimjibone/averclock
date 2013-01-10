@@ -104,8 +104,7 @@ ISR(TIMER1_COMPA_vect) {
 	if (++heartbeat_count == HEARTBEAT_PERIOD) {
 		heartbeat_count = 0;
 		inc_time();
-		update_display(0);
-		toggle_colon();
+		update_display();
 	}
 #else
 	if (++display_adc_count == DISPLAY_ADC_PERIOD) {
@@ -143,14 +142,19 @@ void inc_time (void) {
 		time.hours = 0;
 }
 
-void update_display (char force) {
-#ifndef AGGRESSIVE_MODE
-	// no seconds, so no point in updating every second. Only update on 0 seconds
-	if (time.seconds && !force) return;
-#endif
+void update_display () {
+	static char colon_state = 1;
 
-	// select display
+	colon_state = ! colon_state;
+
 	digitalWrite(DISP_SS,0);
+
+#ifdef TOGGLE_COLON
+	// dots
+	SPI.transfer(0x77);
+	// colon or no colon
+	SPI.transfer(colon_state?1<<4:0);
+#endif
 
 	// hours (1-2 digit)
 	SPI.transfer(time.hours/10?:'x');
@@ -192,22 +196,7 @@ void init_display(void) {
 	digitalWrite(DISP_SS,1);
 
 	// fill with initial time (force)
-	update_display(1);
-}
-
-void toggle_colon(){
-	static char colon_state = false;
-
-	colon_state = ! colon_state;
-
-	// reset, turn on colon
-	digitalWrite(DISP_SS,0);
-	// dots
-	SPI.transfer(0x77);
-	// colon or no colon
-	SPI.transfer(colon_state?1<<4:0);
-
-	digitalWrite(DISP_SS,1);
+	update_display();
 }
 
 void update_brightness() {
