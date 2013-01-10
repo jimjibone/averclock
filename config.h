@@ -7,7 +7,7 @@
 
 // 0->255 == bright->dim
 #define DISP_DIMMEST   120
-#define DISP_BRIGHTEST 10
+#define DISP_BRIGHTEST 5 
 
 #define LDR_PIN A5
 
