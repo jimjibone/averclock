@@ -20,7 +20,8 @@
 #define AUTO_TIME
 
 // tick interval in ms, 1-20 recommended, 260 max
-#define TICK 100
+#define TICK 10
+
 
 // 1 second intervals to update clock
 #define HEARTBEAT_PERIOD          (1000/TICK)
@@ -33,4 +34,4 @@
 #define DISP_SS 10
 
 // tick duty cycle on pin 8?
-//#define DEBUG
+#define DEBUG
