@@ -175,12 +175,12 @@ void init_display(void) {
 	pinMode (DISP_SS, OUTPUT);
 	digitalWrite(DISP_SS,1);
 
-	// wait for it to boot
-	delay(300);
-
 	// initialize SPI:
 	SPI.begin();
 	SPI.setClockDivider(SPI_CLOCK_DIV64);
+
+	// wait for it to boot
+	delay(300);
 
 	// reset, turn on colon
 	digitalWrite(DISP_SS,0);
@@ -202,20 +202,20 @@ void init_display(void) {
 void update_brightness() {
 	unsigned int light = 0;
 
-	// is bright?
-	static char bright = 1;
+	// is display bright?
+	static bool bright = 1;
 
 	light = analogRead(LDR_PIN);
 
 
-	if (light < BRIGHTNESS_THRESH_LIGHT && !bright) {
+	if ((light < BRIGHTNESS_THRESH_LIGHT) && !bright) {
 		digitalWrite(DISP_SS,0);
 		// max brightness
 		SPI.transfer(0x7A);
 		SPI.transfer(DISP_BRIGHTEST);
 		bright = 1;
 		digitalWrite(DISP_SS,1);
-	} else if (light > BRIGHTNESS_THRESH_DARK && bright) {
+	} else if ((light > BRIGHTNESS_THRESH_DARK) && bright) {
 		digitalWrite(DISP_SS,0);
 		// dim display
 		SPI.transfer(0x7A);
