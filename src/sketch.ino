@@ -34,7 +34,7 @@ void setup () {
 	digitalWrite(LDR_PIN,HIGH);
 
 #ifndef DISPLAY_ADC
-	SCH_add_task(inc_time,1,20);
+	SCH_add_task(wallclock_inc_sec,1,20);
 	SCH_add_task(update_display,1,20);
 #else
 	SCH_add_task(display_adc,2,100);

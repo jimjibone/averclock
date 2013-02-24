@@ -14,23 +14,27 @@ void remote_command(void) {
 		command = Serial.read();
 		switch (command) {
 			case 'm':
-				inc_time();
+				// horrible, yes.
+				// TODO: make this better
+				for (i = 0; i<60;i++)
+					inc_time();
+				//wallclock_inc_min();
 			break;
 
 			case 'M':
-				dec_time();
+				// horrible, yes.
+				// TODO: make this better
+				for (i = 0; i<60;i++)
+					dec_time();
+				//wallclock_dec_min();
 			break;
 
 			case 'h':
-				// horrible, yes.
-				for (i = 0; i<60;i++)
-					inc_time();
+				//wallclock_inc_hour();
 			break;
 
 			case 'H':
-				// horrible, yes.
-				for (i = 0; i<60;i++)
-					dec_time();
+				//wallclock_dec_hour();
 			break;
 
 

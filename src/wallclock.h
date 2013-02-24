@@ -5,10 +5,10 @@ typedef struct {
 	char seconds;
 } elapsed;
 
-void inc_time(void);
-void dec_time(void);
 
 
+void wallclock_inc_sec (void);
+void wallclock_dec_sec (void);
 
 #ifdef AUTO_TIME
 	// initialise with compile-time time with an offset to account for build/upload time
@@ -20,7 +20,7 @@ void dec_time(void);
 
 
 // call at 1Hz
-void inc_time (void) {
+void wallclock_inc_sec (void) {
 	if (++time.seconds == 60) {
 		time.minutes++;
 		time.seconds = 0;
@@ -35,7 +35,7 @@ void inc_time (void) {
 		time.hours = 0;
 }
 
-void dec_time(void) {
+void wallclock_dec_sec(void) {
 	if (--time.seconds == 255) {
 		time.minutes--;
 		time.seconds = 59;
