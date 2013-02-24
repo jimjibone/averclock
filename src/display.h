@@ -69,7 +69,7 @@ void update_brightness() {
 
 	light = analogRead(LDR_PIN);
 
-
+	// room is bright
 	if ((light < BRIGHTNESS_THRESH_LIGHT) && !bright) {
 		digitalWrite(DISP_SS,0);
 		// max brightness
@@ -77,6 +77,7 @@ void update_brightness() {
 		SPI.transfer(DISP_BRIGHTEST);
 		bright = 1;
 		digitalWrite(DISP_SS,1);
+	// room is dark
 	} else if ((light > BRIGHTNESS_THRESH_DARK) && bright) {
 		digitalWrite(DISP_SS,0);
 		// dim display
