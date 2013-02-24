@@ -161,6 +161,7 @@ void SCH_init(const uint8_t tick) {
 	for (i = 0; i < SCH_MAX_TASKS; i++)
 		SCH_delete_task(i);
 
+	TCCR1A = 0;
 	TCCR1B = 0;
 	TCNT1  = 0;
 
