@@ -34,6 +34,7 @@ void setup () {
 #ifndef DISPLAY_ADC
 	SCH_add_task(wallclock_inc_sec,1,20);
 	SCH_add_task(update_display,1,20);
+	SCH_add_task(remote_feedback,1,20*60);
 #else
 	SCH_add_task(display_adc,2,100);
 #endif

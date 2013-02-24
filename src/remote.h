@@ -1,5 +1,6 @@
 void remote_init(void);
 void remote_command(void);
+void remote_feedback(void);
 
 
 
@@ -34,7 +35,16 @@ void remote_command(void) {
 			//	Serial.write(DEBUG_INVALID_COMMAND);
 		}
 		update_display();
+		remote_feedback();
 	}
 }
 
+
+void remote_feedback(void) {
+	Serial.print(time.hours/10);
+	Serial.print(time.hours%10);
+	Serial.print(':');
+	Serial.print(time.minutes/10);
+	Serial.println(time.minutes%10);
+}
 
