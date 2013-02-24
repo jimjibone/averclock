@@ -27,6 +27,7 @@ void setup () {
 	inc_time();
 	inc_time();
 	init_display();
+	remote_init();
 
 	pinMode(LDR_PIN,INPUT);
 	// 20K pullup
@@ -42,6 +43,9 @@ void setup () {
 #ifdef AUTO_BRIGHTNESS
 	SCH_add_task(update_brightness,2,1);
 #endif
+
+	SCH_add_task(remote_command,3,1);
+
 	SCH_start();
 }
 

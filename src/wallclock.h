@@ -5,7 +5,9 @@ typedef struct {
 	char seconds;
 } elapsed;
 
-void inc_time (void);
+void inc_time(void);
+void dec_time(void);
+
 
 
 #ifdef AUTO_TIME
@@ -33,3 +35,18 @@ void inc_time (void) {
 		time.hours = 0;
 }
 
+void dec_time(void) {
+	if (--time.seconds == 255) {
+		time.minutes--;
+		time.seconds = 59;
+	}
+
+	if (--time.minutes == 255) {
+		time.hours--;
+		time.minutes = 59;
+	}
+
+	if (time.hours == 255)
+		time.hours = 23;
+
+}
