@@ -1,8 +1,8 @@
 
 typedef struct {
-	char hours;
-	char minutes;
-	char seconds;
+	uint8_t hours;
+	uint8_t minutes;
+	uint8_t seconds;
 } elapsed;
 
 
@@ -41,7 +41,7 @@ void wallclock_dec_sec(void) {
 		time.seconds = 59;
 	}
 
-	if (--time.minutes == 255) {
+	if (time.minutes == 255) {
 		time.hours--;
 		time.minutes = 59;
 	}
