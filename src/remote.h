@@ -17,7 +17,7 @@ void remote_command(void) {
 				// horrible, yes.
 				// TODO: make this better
 				for (i = 0; i<60;i++)
-					inc_time();
+					wallclock_inc_sec();
 				//wallclock_inc_min();
 			break;
 
@@ -25,7 +25,7 @@ void remote_command(void) {
 				// horrible, yes.
 				// TODO: make this better
 				for (i = 0; i<60;i++)
-					dec_time();
+					wallclock_dec_sec();
 				//wallclock_dec_min();
 			break;
 

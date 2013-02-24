@@ -23,9 +23,7 @@
 void setup () {
 	SCH_init(50);
 	// account for compile upload time
-	inc_time();
-	inc_time();
-	inc_time();
+
 	init_display();
 	remote_init();
 
