@@ -9,6 +9,10 @@ typedef struct {
 
 void wallclock_inc_sec (void);
 void wallclock_dec_sec (void);
+void wallclock_inc_min (void);
+void wallclock_dec_min (void);
+void wallclock_inc_hour (void);
+void wallclock_dec_hour (void);
 
 #ifdef AUTO_TIME
 	// initialise with compile-time time with an offset to account for build/upload time
@@ -22,31 +26,42 @@ void wallclock_dec_sec (void);
 // call at 1Hz
 void wallclock_inc_sec (void) {
 	if (++time.seconds == 60) {
-		time.minutes++;
+		wallclock_inc_min();
 		time.seconds = 0;
 	}
+}
 
-	if (time.minutes == 60) {
-		time.hours++;
+void wallclock_inc_min (void) {
+	if (++time.minutes == 60) {
+		wallclock_inc_hour();
 		time.minutes = 0;
 	}
-
-	if (time.hours == 24)
+}
+void wallclock_inc_hour (void) {
+	if (++time.hours == 24)
 		time.hours = 0;
 }
 
+
+
+
+
+
 void wallclock_dec_sec(void) {
 	if (--time.seconds == 255) {
-		time.minutes--;
+		wallclock_dec_min();
 		time.seconds = 59;
 	}
+}
 
-	if (time.minutes == 255) {
-		time.hours--;
+void wallclock_dec_min (void) {
+	if (--time.minutes == 255) {
+		wallclock_dec_hour();
 		time.minutes = 59;
 	}
+}
 
-	if (time.hours == 255)
+void wallclock_dec_hour (void) {
+	if (--time.hours == 255)
 		time.hours = 23;
-
 }
