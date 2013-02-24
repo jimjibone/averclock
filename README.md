@@ -17,6 +17,16 @@ this.
 Connect an LDR on the high side of a potential divider to A6 for automatic
 brightness control.
 
+Bluetooth control
+-----------------
+
+Connect a TTL bluetooth serial port to the UART, or just a cable. Commands:
+
+	m : increment minute
+	M : decrement minute
+	h : increment hour
+	H : decrement hour
+
 
 [1]: http://inotool.org/
 [2]: http://proto-pic.co.uk/7-segment-serial-display-red/
